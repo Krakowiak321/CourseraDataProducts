@@ -43,8 +43,10 @@ shinyServer(
                         min = 0, max = max.slider, value = c(0, max.slider))
         })
         
+        # The map is drawn when user clicks "Go!"
         mymap <- eventReactive(input$go, { 
             if (is.null(input$var)) {return()}
+            # data used in coloring the map
             data <- switch(input$var, 
                     "Median Household Income" = cbind(mergedata[1:5], 
                                     x = pmax(pmin(mergedata$MedHHInc2013, 
@@ -70,7 +72,7 @@ shinyServer(
                     "Total in Poverty (all ages)"= cbind(mergedata[1:5], 
                                     x = pmax(pmin(mergedata$PovertyAllAgesNum2013, 
                                             input$slider[2]), input$slider[1])))
-            
+            # color scheme for the map
             color <- switch(input$var, 
                             "Median Household Income" = "Blues",
                             "Per Capita Income" = "Greens",
@@ -81,7 +83,18 @@ shinyServer(
                             "Total in Poverty (under 18)" = "YlOrRd",
                             "Total in Poverty (all ages)" = "BuGn")
             
+            # increment between colors in the legend
             increment <- (input$slider[2] - input$slider[1])/5
+            # viewing window
+            ranges <- reactiveValues(x = NULL, y = NULL)
+            brush <- input$mapbrush
+            if (!is.null(brush)) {
+                ranges$x <- c(brush$xmin, brush$xmax)
+                ranges$y <- c(brush$ymin, brush$ymax)
+            } else {
+                ranges$x <- NULL
+                ranges$y <- NULL
+            }
             
             #color the map
             map <- ggplot(data, aes(long, lat, group=group)) +
@@ -96,7 +109,7 @@ shinyServer(
                                 paste(as.character(input$slider[1] + increment * 5), 
                                             "or more")
                                 )) +
-                coord_map(project="globular")
+                coord_cartesian(xlim = ranges$x, ylim = ranges$y)
             
             #add borders
             map <- map + geom_path(data = mapstates, colour = "white", size = .5) + 

@@ -27,11 +27,21 @@ shinyUI(fluidPage(
             uiOutput('slider'),
             helpText("Once you are ready, click \"GO!\" to create the map.",
                      "This may take a minute."),
-            actionButton("go", "Go!")
+            actionButton("go", "Go!"),
+            p("Once the map is drawn, you can zoom in by dragging the mouse",
+              "cursor to select a viewing window. Then click \"Go!\" again.",
+              "To zoom back out, click \"Go!\" again while no viewing window",
+              "is selected.")
         ),
         
         mainPanel(
-            plotOutput("map")
+            plotOutput("map", 
+                       dblclick = "mapdblclick",
+                       brush = brushOpts(
+                           id = "mapbrush",
+                           resetOnNew = TRUE
+                       )
+            )
         )
     )
 ))
