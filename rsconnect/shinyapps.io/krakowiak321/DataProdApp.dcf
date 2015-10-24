@@ -1,8 +1,8 @@
 name: DataProdApp
 account: krakowiak321
 server: shinyapps.io
-bundleId: 293848
+bundleId: 295435
 url: https://krakowiak321.shinyapps.io/DataProdApp
-when: 1445467980.0511
+when: 1445612217.69716
 asMultiple: FALSE
 asStatic: FALSE
